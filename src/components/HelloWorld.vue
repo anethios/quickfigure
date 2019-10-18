@@ -1,40 +1,89 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <b-container>
+      <b-row>
+        <b-col>
+          <b-form-input v-model="number" placeholder="Total Squares"/>
+        </b-col>
+        <b-col>
+          <b-form-select v-model="selected" :options="options"/>
+        </b-col>
+      </b-row>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <b-row>
+        <b-col class="chaching">
+          {{endValue | currency}}
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          {{testPref}}
+        </b-col>
+        <b-col>
+          <b-button v-on:click="set"> set </b-button>
+        </b-col>
+        <b-col>
+          <b-button v-on:click="testRemote"> test </b-button>
+        </b-col>
+        <b-col>
+          {{user}}
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
+import { remote } from 'electron'
+const foo = remote.require('../test.js')
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  methods: {
+    set: function(){
+      this.$cookies.set("user", "britton")
+    },
+    get: function(){
+      //Console.log(this.$cookies.get("user"))
+    },
+    testRemote (){
+      console.log(foo)
+    }
+  },
+  data() {
+    return {
+      selected: null,
+      number: null,
+      options: [
+        { value: null, text: 'Select Steepness'},
+        { value: 300, text: 'Gentle'},
+        { value: 325, text: 'Steep In Some Places'},
+        { value: 350, text: 'Steep'}
+      ]
+    }
+  },
+  computed : {
+    user: function(){
+      return this.$cookies.get("user")
+    },
+    endValue: function(){
+      if(this.selected == null){
+        return 0
+      }
+      else{
+        var waste = this.number * 0.15
+        var newNumber = (parseFloat(this.number) + waste) * this.selected
+        return newNumber
+      }
+    },
+    testPref: function(){
+      return 0+1
+    }
   }
 }
 </script>
@@ -54,5 +103,10 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.chaching {
+  color: rgb(31, 145, 31);
+  font-size: 70px;
 }
 </style>
